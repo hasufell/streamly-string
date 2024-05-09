@@ -14,13 +14,13 @@ main :: IO ()
 main = do
   (file:s:_) <- getArgs
   c <- case s of
-         "streamly" -> getFirstCharFromFile   file
-         "string"   -> getFirstCharFromFile'  file
-         "text"     -> getFirstCharFromFile'' file
+         "streamly" -> getLastCharFromFile   file
+         "string"   -> getLastCharFromFile'  file
+         "text"     -> getLastCharFromFile'' file
   print c
 
-getFirstCharFromFile :: FilePath -> IO (Maybe Char)
-getFirstCharFromFile file = stream `Fold.drive` fold
+getLastCharFromFile :: FilePath -> IO (Maybe Char)
+getLastCharFromFile file = stream `Fold.drive` fold
  where
   stream :: Stream IO Char
   stream = Unicode.decodeUtf8Chunks $ File.readChunks file
@@ -29,13 +29,13 @@ getFirstCharFromFile file = stream `Fold.drive` fold
   fold = Fold.latest
 
 
-getFirstCharFromFile' :: FilePath -> IO (Maybe Char)
-getFirstCharFromFile' file = do
+getLastCharFromFile' :: FilePath -> IO (Maybe Char)
+getLastCharFromFile' file = do
   contents <- readFile file
   pure (Just (last contents))
 
-getFirstCharFromFile'' :: FilePath -> IO (Maybe Char)
-getFirstCharFromFile'' file = do
+getLastCharFromFile'' :: FilePath -> IO (Maybe Char)
+getLastCharFromFile'' file = do
   contents <- T.readFile file
   pure (Just (T.last contents))
 
